@@ -1,3 +1,21 @@
 body {
 	background-color: #eeeeee;
 }
+p {
+	margin: 0px;
+	display: inline-block;
+	vertical-align: middle;
+}
+textarea {
+	vertical-align: middle;
+}
+div {
+	display: inline-block;
+}
+pre {
+	margin: 2px;
+	display: inline-block;
+}
+div#instructions {
+	max-width: 1000px;
+}
