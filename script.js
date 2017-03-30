@@ -34,6 +34,9 @@ function solve() {
 
 	var rawFuncString = page.userFunc.value;
 	var funcArray = rawFuncStringToArray(rawFuncString);
+	var derivativeArray = differentiate(funcArray);
+	var imgUrl = parseToImgURL(derivativeArray);
+	page.solution.setAttribute("src", imgUrl);
 }
 function rawFuncStringToArray(str) {
 	console.log("FUNCTION CALL: rawFuncStringToArray(" + str + ")");
@@ -41,6 +44,20 @@ function rawFuncStringToArray(str) {
 	var fArray = [];
 
 	return fArray;
+}
+function differentiate(func) {
+	console.log("FUNCTION CALL: differentiate(" + func + ")");
+
+	var dArray = [];
+
+	return dArray;
+}
+function parseToImgURL(d) {
+	console.log("FUNCTION CALL: parseToImgURL(" + d + ")");
+
+	var url = "";
+
+	return url;
 }
 
 //----------------------------------------------------------------------------------------------------
