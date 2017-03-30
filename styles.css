@@ -19,3 +19,14 @@ pre {
 div#instructions {
 	max-width: 1000px;
 }
+textarea.mathInput {
+	height: 18px;
+	width: 400px;
+	resize: horizontal;
+	max-width: 750px;
+}
+div#calcButton {
+	background-color: #ff9999;
+	text-align: center;
+	padding: 10px;
+}
