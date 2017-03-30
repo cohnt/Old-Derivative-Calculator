@@ -3,6 +3,63 @@
 //----------------------------------------------------------------------------------------------------
 
 var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "log", "ln", "PI", "E", "T", ","];
+var precedence = {
+	"+": 2,
+	"-": 2,
+	"*": 3,
+	"/": 3,
+	"^": 5,
+	"sin": 4,
+	"cos": 4,
+	"tan": 4,
+	"cot": 4,
+	"sec": 4,
+	"csc": 4,
+	"arcsin": 4,
+	"arccos": 4,
+	"arctan": 4,
+	"sqrt": 4,
+	"log": 4,
+	"ln": 4,
+};
+var associativity = {
+	"+": "left",
+	"-": "left",
+	"*": "left",
+	"/": "left",
+	"^": "right",
+	"sin": "right",
+	"cos": "right",
+	"tan": "right",
+	"cot": "right",
+	"sec": "right",
+	"csc": "right",
+	"arcsin": "right",
+	"arccos": "right",
+	"arctan": "right",
+	"sqrt": "right",
+	"log": "right",
+	"ln": "right",
+};
+var funcArgs = {
+	"+": 2,
+	"-": 2,
+	"*": 2,
+	"/": 2,
+	"^": 2,
+	"sin": 1,
+	"cos": 1,
+	"tan": 1,
+	"cot": 1,
+	"sec": 1,
+	"csc": 1,
+	"arcsin": 1,
+	"arccos": 1,
+	"arctan": 1,
+	"sqrt": 1,
+	"log": 1,
+	"ln": 1,
+}
 
 //----------------------------------------------------------------------------------------------------
 // GLOBAL VARIABLES
@@ -35,7 +92,8 @@ function solve() {
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var derivativeArray = differentiate(funcArray);
+		var postfixArray = infixArrayToPostfixArray(funcArray);
+		var derivativeArray = differentiate(postfixArray);
 		var imgUrl = parseToImgURL(derivativeArray);
 		page.solution.setAttribute("src", imgUrl);
 	}
@@ -134,7 +192,7 @@ function parseToImgURL(d) {
 }
 function isOperand(char) {
 	console.log("isOperand(" + char + ")");
-	
+
 	if(!isNaN(Number(char))) {
 		return true;
 	}
@@ -151,9 +209,84 @@ function isOperand(char) {
 		return false;
 	}
 }
+function infixArrayToPostfixArray(infix) {
+	console.log("FUNCTION CALL: infixArrayToPostfixArray(" + infix + ")");
+
+	//The SHUNTING-YARD ALGORITHM...
+
+	var postfix = [];
+	stack = [];
+	var stackLast;
+	for(var i=0; i<infix.length; ++i) {
+		if(isOperand(infix[i])) {
+			postfix.push(infix[i]);
+		}
+		else if(infix[i] == "(") {
+			stack.push(infix[i]);
+		}
+		else if(infix[i] == ")") {
+			stackLast = stack.pop();
+			while(stackLast != "(") {
+				if(typeof stackLast == "undefined") {
+					throw("Mismatched parentheses!");
+				}
+				postfix.push(stackLast);
+				stackLast = stack.pop();
+			}
+		}
+		else if(infix[i] == ",") {
+			stackLast = stack[stack.length-1];
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stack.pop();
+				stackLast = stack[stack.length-1];
+				if(typeof stackLast == "undefined") {
+					throw("Comma error!");
+				}
+			}
+		}
+		else if(isOperator(infix[i])) {
+			if(stack.length == 0 || stack[stack.length-1] == "(") {
+				stack.push(infix[i]);
+			}
+			else if(precedence[infix[i]] > precedence[stack[stack.length-1]]) {
+				stack.push(infix[i]);
+			}
+			else if((precedence[infix[i]] == precedence[stack[stack.length-1]]) && (associativity[infix[i]] == "right")) {
+				stack.push(infix[i]);
+			}
+			else {
+				postfix.push(stack.pop());
+				stack.push(infix[i]);
+			}
+		}
+	}
+	while(stack.length > 0) {
+		postfix.push(stack.pop());
+	}
+	for(var i=0; i<postfix.length; ++i) {
+		if(postfix[i] == "(") {
+			throw("Mismatched parentheses!");
+		}
+	}
+	console.log(postfix);
+	return postfix;
+}
+function isOperator(char) {
+	console.log("isOperator(" + char + ")");
+
+	var foo = false;
+	for(var i=0; i<mathSpecialStrings.length; ++i) {
+		if(char == mathSpecialStrings[i]) {
+			foo = true;
+			break;
+		}
+	}
+	return foo;
+}
 
 //----------------------------------------------------------------------------------------------------
 // EXECUTED CODE
 //----------------------------------------------------------------------------------------------------
 
-setup();
+window.setTimeout(setup, 0);
