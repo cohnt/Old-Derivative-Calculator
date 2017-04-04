@@ -93,8 +93,9 @@ function solve() {
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var stack = convertInfixToPostfix(funcArray);
-		var derivativeArray = differentiate(stack);
+		var postfixArray = convertInfixToPostfix(funcArray);
+		var reversePostfixArray = flipArray(postfixArray);
+		var derivativeArray = differentiate(reversePostfixArray, 0);
 		var cleanArray = mathClean(derivativeArray);
 		var imgUrl = parseToImgURL(cleanArray);
 		page.solution.setAttribute("src", imgUrl);
@@ -178,10 +179,19 @@ function rawFuncStringToArray(str) {
 	}
 	return fArray;
 }
-function differentiate(func) {
-	console.log("FUNCTION CALL: differentiate(" + func + ")");
+function differentiate(stack, index) {
+	console.log("FUNCTION CALL: differentiate(" + stack + ", "+index+")");
 
-	return func;
+	if(isOperator(stack[index])) {
+
+	}
+
+	
+}
+function getSpecificDifferentiation(func) {
+	console.log("getSpecificDifferentiation("+func+")");
+
+
 }
 function parseToImgURL(d) {
 	console.log("FUNCTION CALL: parseToImgURL(" + d + ")");
@@ -286,6 +296,11 @@ function convertInfixToPostfix(infix) {
 	}
 	console.log(postfix);
 	return postfix;
+}
+function flipArray(a) {
+	console.log("flipArray("+a+")");
+
+	return a.reverse();
 }
 
 //----------------------------------------------------------------------------------------------------
