@@ -88,12 +88,15 @@ function setup() {
 }
 function solve() {
 	console.log("FUNCTION CALL: solve()");
+	//This is helpful: https://www.codeproject.com/kb/recipes/differentiation.aspx
 
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var derivativeArray = differentiate(funcArray);
-		var imgUrl = parseToImgURL(derivativeArray);
+		var stack = fillStack(funcArray);
+		var derivativeArray = differentiate(stack);
+		var cleanArray = mathClean(derivativeArray);
+		var imgUrl = parseToImgURL(cleanArray);
 		page.solution.setAttribute("src", imgUrl);
 	}
 	catch(err) {
@@ -178,9 +181,7 @@ function rawFuncStringToArray(str) {
 function differentiate(func) {
 	console.log("FUNCTION CALL: differentiate(" + func + ")");
 
-	var dArray = [];
-
-	return dArray;
+	return func;
 }
 function parseToImgURL(d) {
 	console.log("FUNCTION CALL: parseToImgURL(" + d + ")");
@@ -217,6 +218,16 @@ function isOperator(char) {
 		}
 	}
 	return foo;
+}
+function fillStack(rawArray) {
+	console.log("fillStack("+rawArray+")");
+	
+	return rawArray;
+}
+function mathClean(math) {
+	console.log("mathClean("+math+")");
+	
+	return math;
 }
 
 //----------------------------------------------------------------------------------------------------
