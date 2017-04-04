@@ -92,8 +92,7 @@ function solve() {
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var postfixArray = infixArrayToPostfixArray(funcArray);
-		var derivativeArray = differentiate(postfixArray);
+		var derivativeArray = differentiate(funcArray);
 		var imgUrl = parseToImgURL(derivativeArray);
 		page.solution.setAttribute("src", imgUrl);
 	}
@@ -208,81 +207,6 @@ function isOperand(char) {
 	else {
 		return false;
 	}
-}
-function infixArrayToPostfixArray(infix) {
-	console.log("FUNCTION CALL: infixArrayToPostfixArray(" + infix + ")");
-
-	//The SHUNTING-YARD ALGORITHM...
-
-	var postfix = [];
-	stack = [];
-	var stackLast;
-	for(var i=0; i<infix.length; ++i) {
-		if(isOperand(infix[i])) {
-			postfix.push(infix[i]);
-		}
-		else if(infix[i] == "(") {
-			stack.push(infix[i]);
-		}
-		else if(infix[i] == ")") {
-			stackLast = stack.pop();
-			while(stackLast != "(") {
-				if(typeof stackLast == "undefined") {
-					throw("Mismatched parentheses!");
-				}
-				postfix.push(stackLast);
-				stackLast = stack.pop();
-			}
-		}
-		else if(infix[i] == ",") {
-			stackLast = stack[stack.length-1];
-			while(stackLast != "(") {
-				postfix.push(stackLast);
-				stack.pop();
-				stackLast = stack[stack.length-1];
-				if(typeof stackLast == "undefined") {
-					throw("Comma error!");
-				}
-			}
-		}
-		else if(isOperator(infix[i])) {
-			if(stack.length == 0 || stack[stack.length-1] == "(") {
-				stack.push(infix[i]);
-			}
-			else if(precedence[infix[i]] > precedence[stack[stack.length-1]]) {
-				stack.push(infix[i]);
-			}
-			else if((precedence[infix[i]] == precedence[stack[stack.length-1]]) && (associativity[infix[i]] == "right")) {
-				stack.push(infix[i]);
-			}
-			else {
-				postfix.push(stack.pop());
-				stack.push(infix[i]);
-			}
-		}
-	}
-	while(stack.length > 0) {
-		postfix.push(stack.pop());
-	}
-	for(var i=0; i<postfix.length; ++i) {
-		if(postfix[i] == "(") {
-			throw("Mismatched parentheses!");
-		}
-	}
-	console.log(postfix);
-	return postfix;
-}
-function isOperator(char) {
-	console.log("isOperator(" + char + ")");
-
-	var foo = false;
-	for(var i=0; i<mathSpecialStrings.length; ++i) {
-		if(char == mathSpecialStrings[i]) {
-			foo = true;
-			break;
-		}
-	}
-	return foo;
 }
 
 //----------------------------------------------------------------------------------------------------
