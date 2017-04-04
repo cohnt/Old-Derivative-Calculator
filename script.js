@@ -208,6 +208,16 @@ function isOperand(char) {
 		return false;
 	}
 }
+function isOperator(char) {
+	var foo = false;
+	for(var i=0; i<mathSpecialStrings.length; ++i) {
+		if(char == mathSpecialStrings[i]) {
+			foo = true;
+			break;
+		}
+	}
+	return foo;
+}
 
 //----------------------------------------------------------------------------------------------------
 // EXECUTED CODE
