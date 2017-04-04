@@ -93,7 +93,7 @@ function solve() {
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var stack = fillStack(funcArray);
+		var stack = convertInfixToPostfix(funcArray);
 		var derivativeArray = differentiate(stack);
 		var cleanArray = mathClean(derivativeArray);
 		var imgUrl = parseToImgURL(cleanArray);
@@ -219,15 +219,73 @@ function isOperator(char) {
 	}
 	return foo;
 }
-function fillStack(rawArray) {
-	console.log("fillStack("+rawArray+")");
-	
-	return rawArray;
-}
 function mathClean(math) {
 	console.log("mathClean("+math+")");
 	
 	return math;
+}
+function convertInfixToPostfix(infix) {
+	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
+	
+	//The SHUNTING-YARD ALGORITHM...
+
+	var postfix = [];
+	stack = [];
+	var stackLast;
+	for(var i=0; i<infix.length; ++i) {
+		if(isOperand(infix[i])) {
+			postfix.push(infix[i]);
+		}
+		else if(infix[i] == "(") {
+			stack.push(infix[i]);
+		}
+		else if(infix[i] == ")") {
+			stackLast = stack.pop();
+			while(stackLast != "(") {
+				if(typeof stackLast == "undefined") {
+					throw("Mismatched parentheses!");
+				}
+				postfix.push(stackLast);
+				stackLast = stack.pop();
+			}
+		}
+		else if(infix[i] == ",") {
+			stackLast = stack[stack.length-1];
+			while(stackLast != "(") {
+				postfix.push(stackLast);
+				stack.pop();
+				stackLast = stack[stack.length-1];
+				if(typeof stackLast == "undefined") {
+					throw("Comma error!");
+				}
+			}
+		}
+		else if(isOperator(infix[i])) {
+			if(stack.length == 0 || stack[stack.length-1] == "(") {
+				stack.push(infix[i]);
+			}
+			else if(precedence[infix[i]] > precedence[stack[stack.length-1]]) {
+				stack.push(infix[i]);
+			}
+			else if((precedence[infix[i]] == precedence[stack[stack.length-1]]) && (associativity[infix[i]] == "right")) {
+				stack.push(infix[i]);
+			}
+			else {
+				postfix.push(stack.pop());
+				stack.push(infix[i]);
+			}
+		}
+	}
+	while(stack.length > 0) {
+		postfix.push(stack.pop());
+	}
+	for(var i=0; i<postfix.length; ++i) {
+		if(postfix[i] == "(") {
+			throw("Mismatched parentheses!");
+		}
+	}
+	console.log(postfix);
+	return postfix;
 }
 
 //----------------------------------------------------------------------------------------------------
