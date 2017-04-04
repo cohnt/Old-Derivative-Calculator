@@ -184,13 +184,47 @@ function makeStackTree(pf) {
 
 	var st = [];
 
-	currentChar = pf[pf.length]
-
-	if(isOperator(pf[pf.length-1])) {
-		st.push
+	if(isOperator(pf[0])) {
+		if(!isBinaryOperator(pf[0])) {
+			st.push(pf[0]);
+			var substrIndex = findArgIndexAndLength(pf, 0);
+			var substr = pf.slice(1, 1+substrIndex[1]);
+			st.push(makeStackTree(substr));
+		}
+		else {
+			st.push(pf[0]);
+			var substr1Index = findArgIndexAndLength(pf, 0);
+			var substr1 = pf.slice(1, 1+substr1Index[1]);
+			st.push(substr1);
+			var substr2Index = findArgIndexAndLength(pf, 1+substr1Index[1]);
+			var substr2 = pf.slice(substr2Index[0], substr2Index[0]+substr2Index[1]);
+			st.push(substr2);
+		}
+	}
+	else {
+		st.push(pf[0]);
 	}
 
 	return st;
+}
+function findArgIndexAndLength(pf, start) {
+	console.log("findArgIndexAndLength("+pf+")");
+
+	var i = start;
+	var unmetArgs = 1;
+	do {
+		++i;
+		--unmetArgs;
+		if(isBinaryOperator(pf[i])) {
+			unmetArgs += 2;
+		}
+		else if(isOperator(pf[i])) {
+			unmetArgs += 1;
+		}
+	}
+	while(unmetArgs > 0);
+
+	return [start, i];
 }
 function differentiate(stack, index) {
 	console.log("FUNCTION CALL: differentiate(" + stack + ", "+index+")");
