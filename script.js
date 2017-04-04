@@ -94,7 +94,7 @@ function solve() {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
 		var prefixArray = convertInfixToPrefix(funcArray);
-		var stackTree = makeStackTree(prefixArray);
+		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
 		var derivativeArray = differentiate(stackTree);
 		var cleanArray = mathClean(derivativeArray);
 		var imgUrl = parseToImgURL(cleanArray);
@@ -195,10 +195,10 @@ function makeStackTree(pf) {
 			st.push(pf[0]);
 			var substr1Index = findArgIndexAndLength(pf, 0);
 			var substr1 = pf.slice(1, 1+substr1Index[1]);
-			st.push(substr1);
+			st.push(makeStackTree(substr1));
 			var substr2Index = findArgIndexAndLength(pf, 1+substr1Index[1]);
 			var substr2 = pf.slice(substr2Index[0], substr2Index[0]+substr2Index[1]);
-			st.push(substr2);
+			st.push(makeStackTree(substr2));
 		}
 	}
 	else {
@@ -258,6 +258,9 @@ function isOperand(char) {
 	}
 }
 function isOperator(char) {
+	if(char == "T" || char == "PI" || char == "E") {
+		return false;
+	}
 	var foo = false;
 	for(var i=0; i<mathSpecialStrings.length; ++i) {
 		if(char == mathSpecialStrings[i]) {
