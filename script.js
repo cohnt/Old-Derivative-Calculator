@@ -183,10 +183,11 @@ function differentiate(stack, index) {
 	console.log("FUNCTION CALL: differentiate(" + stack + ", "+index+")");
 
 	if(isOperator(stack[index])) {
-
+		if(isBinaryOperator(stack[index])) {
+			var u = index + 1;
+			var v = findSecondStartIndex(stack, index);
+		}
 	}
-
-	
 }
 function getSpecificDifferentiation(func) {
 	console.log("getSpecificDifferentiation("+func+")");
@@ -228,6 +229,10 @@ function isOperator(char) {
 		}
 	}
 	return foo;
+}
+function isBinaryOperator(char) {
+	//
+	return (char == "+") || (char == "-") || (char == "*") || (char == "/") || (char == "^");
 }
 function mathClean(math) {
 	console.log("mathClean("+math+")");
@@ -301,6 +306,23 @@ function flipArray(a) {
 	console.log("flipArray("+a+")");
 
 	return a.reverse();
+}
+function findSecondStartIndex(stack, index) {
+	var unmetArguments = 1;
+	var i = index;
+	do {
+		++i;
+		unmetArguments -= 1;
+		if(isBinaryOperator(stack[i])) {
+			unmetArguments += 2;
+		}
+		else if(isOperator(stack[i])) {
+			unmetArguments += 1;
+		}
+	}
+	while(unmetArguments > 0);
+
+	return i+1;
 }
 
 //----------------------------------------------------------------------------------------------------
