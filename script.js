@@ -93,9 +93,9 @@ function solve() {
 	try {
 		var rawFuncString = page.userFunc.value;
 		var funcArray = rawFuncStringToArray(rawFuncString);
-		var postfixArray = convertInfixToPostfix(funcArray);
-		var reversePostfixArray = flipArray(postfixArray);
-		var derivativeArray = differentiate(reversePostfixArray, 0);
+		var prefixArray = convertInfixToPrefix(funcArray);
+		var stackTree = makeStackTree(prefixArray);
+		var derivativeArray = differentiate(stackTree);
 		var cleanArray = mathClean(derivativeArray);
 		var imgUrl = parseToImgURL(cleanArray);
 		page.solution.setAttribute("src", imgUrl);
@@ -179,20 +179,23 @@ function rawFuncStringToArray(str) {
 	}
 	return fArray;
 }
+function makeStackTree(pf) {
+	console.log("FUNCTION CALL: makeStackTree("+pf+")");
+
+	var st = [];
+
+	currentChar = pf[pf.length]
+
+	if(isOperator(pf[pf.length-1])) {
+		st.push
+	}
+
+	return st;
+}
 function differentiate(stack, index) {
 	console.log("FUNCTION CALL: differentiate(" + stack + ", "+index+")");
 
-	if(isOperator(stack[index])) {
-		if(isBinaryOperator(stack[index])) {
-			var u = index + 1;
-			var v = findSecondStartIndex(stack, index);
-		}
-	}
-}
-function getSpecificDifferentiation(func) {
-	console.log("getSpecificDifferentiation("+func+")");
-
-
+	return stack;
 }
 function parseToImgURL(d) {
 	console.log("FUNCTION CALL: parseToImgURL(" + d + ")");
@@ -239,8 +242,12 @@ function mathClean(math) {
 	
 	return math;
 }
-function convertInfixToPostfix(infix) {
-	console.log("FUNCTION CALL: convertInfixToPostfix("+infix+")");
+function convertInfixToPrefix(infix) {
+	console.log("FUNCTION CALL: convertInfixToPrefix("+infix+")");
+
+	//http://scanftree.com/Data_Structure/infix-to-prefix don't fail me now...
+
+	infix.reverse();
 	
 	//The SHUNTING-YARD ALGORITHM...
 
@@ -251,12 +258,12 @@ function convertInfixToPostfix(infix) {
 		if(isOperand(infix[i])) {
 			postfix.push(infix[i]);
 		}
-		else if(infix[i] == "(") {
+		else if(infix[i] == ")") { //Originally (
 			stack.push(infix[i]);
 		}
-		else if(infix[i] == ")") {
+		else if(infix[i] == "(") { //Originally )
 			stackLast = stack.pop();
-			while(stackLast != "(") {
+			while(stackLast != ")") { //Originally (
 				if(typeof stackLast == "undefined") {
 					throw("Mismatched parentheses!");
 				}
@@ -266,7 +273,7 @@ function convertInfixToPostfix(infix) {
 		}
 		else if(infix[i] == ",") {
 			stackLast = stack[stack.length-1];
-			while(stackLast != "(") {
+			while(stackLast != ")") { //Originally (
 				postfix.push(stackLast);
 				stack.pop();
 				stackLast = stack[stack.length-1];
@@ -276,7 +283,7 @@ function convertInfixToPostfix(infix) {
 			}
 		}
 		else if(isOperator(infix[i])) {
-			if(stack.length == 0 || stack[stack.length-1] == "(") {
+			if(stack.length == 0 || stack[stack.length-1] == ")") { //Originally (
 				stack.push(infix[i]);
 			}
 			else if(precedence[infix[i]] > precedence[stack[stack.length-1]]) {
@@ -295,34 +302,16 @@ function convertInfixToPostfix(infix) {
 		postfix.push(stack.pop());
 	}
 	for(var i=0; i<postfix.length; ++i) {
-		if(postfix[i] == "(") {
+		if(postfix[i] == ")") { //Originally (
 			throw("Mismatched parentheses!");
 		}
 	}
+
+	postfix.reverse();
+
 	console.log(postfix);
+
 	return postfix;
-}
-function flipArray(a) {
-	console.log("flipArray("+a+")");
-
-	return a.reverse();
-}
-function findSecondStartIndex(stack, index) {
-	var unmetArguments = 1;
-	var i = index;
-	do {
-		++i;
-		unmetArguments -= 1;
-		if(isBinaryOperator(stack[i])) {
-			unmetArguments += 2;
-		}
-		else if(isOperator(stack[i])) {
-			unmetArguments += 1;
-		}
-	}
-	while(unmetArguments > 0);
-
-	return i+1;
 }
 
 //----------------------------------------------------------------------------------------------------
