@@ -336,7 +336,7 @@ function convertStackToInfix(stack) {
 	}
 }
 function parseStackToImgURL(d) {
-	console.log("FUNCTION CALL: parseToImgURL("+d+")");
+	console.log("FUNCTION CALL: parseStackToImgURL("+d+")");
 
 	if(d.length == 1) {
 		if(!isNaN(Number(d[0]))) {
