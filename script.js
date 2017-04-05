@@ -223,13 +223,37 @@ function findArgIndexAndLength(pf, start) {
 
 	return [start, i];
 }
-function differentiate(stack, index) {
-	console.log("FUNCTION CALL: differentiate(" + stack + ", "+index+")");
+function differentiate(stack) {
+	console.log("FUNCTION CALL: differentiate("+stack+")");
 
-	return stack;
+	if(isOperand(stack[0])) {
+		if(stack[0] == "T") {
+			return [1];
+		}
+		else {
+			return [0];
+		}
+	}
+	else {
+		switch(stack[0]) { //Apply differentiation rules here.
+			case "+": //Sum Rule: u+v -> du+dv
+				return ["+", differentiate(stack[1]), differentiate(stack[2])];
+				break;
+			case "-": //Sum Rule: u-v -> du-dv
+				return ["-", differentiate(stack[1]), differentiate(stack[2])];
+				break;
+			case "*": //Product Rule: uv -> udv+vdu
+				return ["+", ["*", stack[1], differentiate(stack[2])], ["*", differentiate(stack[1]), stack[2]]];
+				break;
+			case "/": //Quotient Rule: u/v -> (vdu-udv)/(v^2)
+				return ["/", ["-", ["*", differentiate(stack[1]), stack[2]], ["*", stack[1], differentiate(stack[2])]], ["^", stack[2], [2]]]
+				break;
+
+		}
+	}
 }
 function parseToImgURL(d) {
-	console.log("FUNCTION CALL: parseToImgURL(" + d + ")");
+	console.log("FUNCTION CALL: parseToImgURL("+d+")");
 
 	var url = "";
 
