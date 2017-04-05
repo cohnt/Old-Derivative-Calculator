@@ -346,9 +346,11 @@ function convertInfixToPrefix(infix) {
 
 	postfix.reverse();
 
-	console.log(postfix);
+	var prefix = postfix.slice(0);
 
-	return postfix;
+	console.log(prefix);
+
+	return prefix;
 }
 
 //----------------------------------------------------------------------------------------------------
