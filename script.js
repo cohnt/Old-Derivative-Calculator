@@ -250,17 +250,29 @@ function differentiate(stack) {
 				return ["+", ["*", u, differentiate(v)], ["*", differentiate(u), v]];
 				break;
 			case "/": //Quotient Rule: u/v -> (vdu-udv)/(v^2)
-				return ["/", ["-", ["*", differentiate(u), v], ["*", u, differentiate(v)]], ["^", v, [2]]]
+				return ["/", ["-", ["*", differentiate(u), v], ["*", u, differentiate(v)]], ["^", v, ["2"]]]
 				break;
 			case "^": //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
 				return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
 				break;
-			//case "sin": 
-			//case "cos": 
-			//case "tan": 
-			//case "sec": 
-			//case "csc": 
-			//case "cot": 
+			case "sin": //sin(u) -> cos(u)*du
+				return ["*", ["cos", u], differentiate(u)];
+				break;
+			case "cos": //cos(u) -> -1*sin(u)*du
+				return ["*", ["-1"], ["*", ["sin", u], differentiate(u)]];
+				break;
+			case "tan": //tan(u) -> (sec(u))^2*du
+				return ["*", ["^", ["sec", u], ["2"]], differentiate(u)];
+				break;
+			case "sec": //sec(u) -> sec(u)*tan(u)*du
+				return ["*", ["sec", u], ["*", ["tan", u], differentiate(u)]];
+				break;
+			case "csc": //csc(u) -> -1*csc(u)*cot(u)*du
+				return ["*", ["*", ["-1"], ["csc", u]], ["*", ["cot", u], differentiate(u)]];
+				break;
+			case "cot": //cot(u) -> -1*(csc(u))^2*du
+				return ["*", ["-1"], ["*", ["^", ["csc", u], ["2"]], differentiate(u)]];
+				break;
 			//case "arcsin": 
 			//case "arccos": 
 			//case "arctan": 
