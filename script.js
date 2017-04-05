@@ -235,20 +235,40 @@ function differentiate(stack) {
 		}
 	}
 	else {
+		var u = stack[1].slice(0);
+		if(stack.length == 3) {
+			var v = stack[2].slice(0);
+		}
 		switch(stack[0]) { //Apply differentiation rules here.
 			case "+": //Sum Rule: u+v -> du+dv
-				return ["+", differentiate(stack[1]), differentiate(stack[2])];
+				return ["+", differentiate(u), differentiate(v)];
 				break;
 			case "-": //Sum Rule: u-v -> du-dv
-				return ["-", differentiate(stack[1]), differentiate(stack[2])];
+				return ["-", differentiate(u), differentiate(v)];
 				break;
 			case "*": //Product Rule: uv -> udv+vdu
-				return ["+", ["*", stack[1], differentiate(stack[2])], ["*", differentiate(stack[1]), stack[2]]];
+				return ["+", ["*", u, differentiate(v)], ["*", differentiate(u), v]];
 				break;
 			case "/": //Quotient Rule: u/v -> (vdu-udv)/(v^2)
-				return ["/", ["-", ["*", differentiate(stack[1]), stack[2]], ["*", stack[1], differentiate(stack[2])]], ["^", stack[2], [2]]]
+				return ["/", ["-", ["*", differentiate(u), v], ["*", u, differentiate(v)]], ["^", v, [2]]]
 				break;
-
+			case "^": //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
+				return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
+				break;
+			//case "sin": 
+			//case "cos": 
+			//case "tan": 
+			//case "sec": 
+			//case "csc": 
+			//case "cot": 
+			//case "arcsin": 
+			//case "arccos": 
+			//case "arctan": 
+			//case "sqrt": 
+			//case "log": 
+			case "ln": //ln(u) -> u^(-1)*du
+				return ["*", ["^", u, "-1"], differentiate(u)];
+				break;
 		}
 	}
 }
