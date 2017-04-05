@@ -215,11 +215,8 @@ function findArgIndexAndLength(pf, start) {
 	do {
 		++i;
 		--unmetArgs;
-		if(isBinaryOperator(pf[i])) {
-			unmetArgs += 2;
-		}
-		else if(isOperator(pf[i])) {
-			unmetArgs += 1;
+		if(isOperator(pf[i])) {
+			unmetArgs += funcArgs[pf[i]];
 		}
 	}
 	while(unmetArgs > 0);
