@@ -273,11 +273,21 @@ function differentiate(stack) {
 			case "cot": //cot(u) -> -1*(csc(u))^2*du
 				return ["*", ["-1"], ["*", ["^", ["csc", u], ["2"]], differentiate(u)]];
 				break;
-			//case "arcsin": 
-			//case "arccos": 
-			//case "arctan": 
-			//case "sqrt": 
-			//case "log": 
+			case "arcsin": //arcsin(u) -> du/(sqrt(1-u^2))
+				return ["/", differentiate(u), ["sqrt", ["-", ["1"], ["^", u, ["2"]]]]];
+				break;
+			case "arccos": //arccos(u) -> -1*du/(sqrt(1-u^2))
+				return ["/", ["*", ["-1"], differentiate(u)], ["sqrt", ["-", ["1"], ["^", u, ["2"]]]]];
+				break;
+			case "arctan": //arctan(u) -> du/(1+u^2)
+				return ["/", differentiate(u), ["+", ["1"], ["^", u, ["2"]]]];
+				break;
+			case "sqrt": //sqrt(u) -> du/(2*sqrt(u))
+				return ["/", differentiate(u), ["*", ["2"], ["sqrt", u]]];
+				break;
+			case "log": //log(u) -> du/(u*ln(10))
+				return ["/", differentiate(u), ["*", u, ["ln", ["10"]]]];
+				break;
 			case "ln": //ln(u) -> u^(-1)*du
 				return ["*", ["^", u, "-1"], differentiate(u)];
 				break;
