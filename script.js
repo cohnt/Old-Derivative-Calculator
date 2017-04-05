@@ -2,7 +2,7 @@
 // CONSTANTS
 //----------------------------------------------------------------------------------------------------
 
-var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "log", "ln", "PI", "E", "T", ","];
+var mathSpecialStrings = ["(", ")", "+", "-", "*", "/", "^", "arcsin", "arccos", "arctan", "cos", "sin", "tan", "cot", "sec", "csc", "sqrt", "log", "ln", "PI", "E", "T"];
 var precedence = {
 	"+": 2,
 	"-": 2,
@@ -59,13 +59,38 @@ var funcArgs = {
 	"sqrt": 1,
 	"log": 1,
 	"ln": 1,
-}
+};
+var mathDataCodes = {
+	"(": ["%28"],
+	")": ["%29"],
+	"+": ["%2B"],
+	"-": ["-"],
+	"*": ["%2A"],
+	"/": ["%5Cfrac%7B", "%7D%7B", "%7D"],
+	"^": ["%5E%7B", "%7D"],
+	"arcsin": ["%5Carcsin%7B", "%7D"],
+	"arccos": ["%5Carccos%7B", "%7D"],
+	"arctan": ["%5Carctan%7B", "%7D"],
+	"sin": ["%5Csin%7B", "%7D"],
+	"cos": ["%5Ccos%7B", "%7D"],
+	"tan": ["%5Ctan%7B", "%7D"],
+	"sec": ["%5Csec%7B", "%7D"],
+	"csc": ["%5Ccsc%7B", "%7D"],
+	"cot": ["%5Ccot%7B", "%7D"],
+	"sqrt": ["%5Csqrt%5B%20%5D%7B", "%7D"],
+	"log": ["%5Clog%7B", "%7D"],
+	"ln": ["%5Cln%7B", "%7D"],
+	"PI": ["%5Cpi%7B%7D"],
+	"E": ["e"],
+	"T": ["T"]
+};
 
 //----------------------------------------------------------------------------------------------------
 // GLOBAL VARIABLES
 //----------------------------------------------------------------------------------------------------
 
 var page = {};
+var lastSolution;
 
 //----------------------------------------------------------------------------------------------------
 // CLASSES
@@ -97,10 +122,13 @@ function solve() {
 		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
 		var derivativeArray = differentiate(stackTree);
 		var infix = convertStackToInfix(derivativeArray); console.log(infix);
-		var imgUrl = parseToImgURL(infix);
+		lastSolution = infix;
+		var imgUrlData = parseStackToImgURL(derivativeArray);
+		var imgUrl = makeUrl(imgUrlData);
 		page.solution.setAttribute("src", imgUrl);
 	}
 	catch(err) {
+		console.log(err);
 		alert(String(err[0]) + String(err[1]));
 		if(!isNaN(Number(err[1]))) {
 			window.setTimeout(function() {
@@ -307,12 +335,38 @@ function convertStackToInfix(stack) {
 		return "(" + convertStackToInfix(stack[1]) + ")" + stack[0] + "(" + convertStackToInfix(stack[2]) + ")";
 	}
 }
-function parseToImgURL(d) {
+function parseStackToImgURL(d) {
 	console.log("FUNCTION CALL: parseToImgURL("+d+")");
 
-	var url = "";
-
-	return url;
+	if(d.length == 1) {
+		if(!isNaN(Number(d[0]))) {
+			return "(" + d[0] + ")";
+		}
+		else {
+			return "(" + mathDataCodes[d[0]][0] + ")";
+		}
+	}
+	else if(d.length == 2) {
+		return "(" + mathDataCodes[d[0]][0] + parseStackToImgURL(d[1]) + mathDataCodes[d[0]][1] + ")";
+	}
+	else if(d.length == 3) {
+		switch(d[0]) {
+			case "/":
+				return mathDataCodes[d[0]][0] + parseStackToImgURL(d[1]) + mathDataCodes[d[0]][1] + parseStackToImgURL(d[2]) + mathDataCodes[d[0]][2];
+				break;
+			case "^":
+				return "(" + parseStackToImgURL(d[1]) + mathDataCodes[d[0]][0] + parseStackToImgURL(d[2]) + mathDataCodes[d[0]][1] + ")";
+				break;
+			default:
+				return "(" + parseStackToImgURL(d[1]) + ")" + mathDataCodes[d[0]][0] + "(" + parseStackToImgURL(d[2]) + ")";
+				break;
+		}
+	}
+}
+function makeUrl(data) {
+	console.log("FUNCTION CALL: makeUrl("+data+")");
+	
+	return "http://latex.numberempire.com/render?" + data;
 }
 function isOperand(char) {
 	console.log("isOperand(" + char + ")");
