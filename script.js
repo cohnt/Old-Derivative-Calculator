@@ -96,8 +96,8 @@ function solve() {
 		var prefixArray = convertInfixToPrefix(funcArray);
 		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
 		var derivativeArray = differentiate(stackTree);
-		var cleanArray = mathClean(derivativeArray);
-		var imgUrl = parseToImgURL(cleanArray);
+		var infix = convertStackToInfix(derivativeArray); console.log(infix);
+		var imgUrl = parseToImgURL(infix);
 		page.solution.setAttribute("src", imgUrl);
 	}
 	catch(err) {
@@ -294,6 +294,19 @@ function differentiate(stack) {
 		}
 	}
 }
+function convertStackToInfix(stack) {
+	console.log("FUNCTION CALL: convertStackToInfix("+stack+")");
+
+	if(stack.length == 1) {
+		return stack[0];
+	}
+	else if(stack.length == 2) {
+		return stack[0] + "(" + convertStackToInfix(stack[1]) + ")";
+	}
+	else if(stack.length == 3) {
+		return "(" + convertStackToInfix(stack[1]) + ")" + stack[0] + "(" + convertStackToInfix(stack[2]) + ")";
+	}
+}
 function parseToImgURL(d) {
 	console.log("FUNCTION CALL: parseToImgURL("+d+")");
 
@@ -336,11 +349,6 @@ function isOperator(char) {
 function isBinaryOperator(char) {
 	//
 	return (char == "+") || (char == "-") || (char == "*") || (char == "/") || (char == "^");
-}
-function mathClean(math) {
-	console.log("mathClean("+math+")");
-	
-	return math;
 }
 function convertInfixToPrefix(infix) {
 	console.log("FUNCTION CALL: convertInfixToPrefix("+infix+")");
