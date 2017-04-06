@@ -340,10 +340,10 @@ function parseStackToImgURL(d) {
 
 	if(d.length == 1) {
 		if(!isNaN(Number(d[0]))) {
-			return "(" + d[0] + ")";
+			return d[0];
 		}
 		else {
-			return "(" + mathDataCodes[d[0]][0] + ")";
+			return mathDataCodes[d[0]][0];
 		}
 	}
 	else if(d.length == 2) {
