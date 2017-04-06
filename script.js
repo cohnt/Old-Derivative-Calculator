@@ -226,7 +226,7 @@ function makeStackTree(pf) {
 			var substr1 = pf.slice(1, 1+substr1Index[1]);
 			st.push(makeStackTree(substr1));
 			var substr2Index = findArgIndexAndLength(pf, 1+substr1Index[1]);
-			var substr2 = pf.slice(substr2Index[0], substr2Index[0]+substr2Index[1]);
+			var substr2 = pf.slice(substr2Index[0]);
 			st.push(makeStackTree(substr2));
 		}
 	}
@@ -244,8 +244,12 @@ function findArgIndexAndLength(pf, start) {
 	do {
 		++i;
 		--unmetArgs;
+		console.log(pf[i]);
+		if(isBinaryOperator(pf[i])) {
+			unmetArgs += 2;
+		}
 		if(isOperator(pf[i])) {
-			unmetArgs += funcArgs[pf[i]];
+			unmetArgs += 1;
 		}
 	}
 	while(unmetArgs > 0);
