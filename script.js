@@ -248,7 +248,7 @@ function findArgIndexAndLength(pf, start) {
 		if(isBinaryOperator(pf[i])) {
 			unmetArgs += 2;
 		}
-		if(isOperator(pf[i])) {
+		else if(isOperator(pf[i])) {
 			unmetArgs += 1;
 		}
 	}
@@ -489,6 +489,8 @@ function simplify(math) {
 
 	for(var i=0; i<layers; ++i) {
 		math = removeAddSubtractZeros(math);
+		math = removeMultiplyDivideZeros(math);
+		math = removeMultiplyDivideOnes(math);
 	}
 
 	return math;
@@ -506,9 +508,14 @@ function getArrayDepth(a, currentDepth) {
 
 	return Math.max.apply(null, depths);
 }
+function isZero(x) {
+	//
+	return x == "0" || x == "-0";
+}
 function removeAddSubtractZeros(math) {
-	console.log("removeAddSubtractZeros("+math+")");
+	console.log("FUNCTION CALL: removeAddSubtractZeros("+math+")");
 	//When adding or subtracting a zero, get rid of it.
+
 	if(math.length == 1) {
 		return [math[0]];
 	}
@@ -531,9 +538,57 @@ function removeAddSubtractZeros(math) {
 		}
 	}
 }
-function isZero(x) {
-	//
-	return x == "0" || x == "-0";
+function removeMultiplyDivideZeros(math) {
+	console.log("FUNCTION CALL: removeMultiplyDivideZeros("+math+")");
+	//When multiplying by a zero, make it zero.
+
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], removeMultiplyDivideZeros(math[1])];
+	}
+	else if(math.length == 3) {
+		var o = math[0];
+		var a = math[1][0];
+		var b = math[2][0];
+		if((isZero(a) || isZero(b)) && o == "*") {
+			return ["0"];
+		}
+		else if(isZero(a) && o == "/") {
+			if(isZero(b)) {
+				alert("Warning, your answer contains 0/0. Answer may be innacurate.");
+			}
+			return ["0"];
+		}
+		else {
+			return [math[0], removeMultiplyDivideZeros(math[1]), removeMultiplyDivideZeros(math[2])];
+		}
+	}
+}
+function removeMultiplyDivideOnes(math) {
+	console.log("FUNCTION CALL: removeMultiplyDivideOnes("+math+")");
+
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], removeMultiplyDivideOnes(math[1])];
+	}
+	else if(math.length == 3) {
+		var o = math[0];
+		var a = math[1][0];
+		var b = math[2][0];
+		if(a == "1" && o == "*") {
+			return removeMultiplyDivideOnes(math[2]);
+		}
+		else if(b == "1" && (o == "*" || o == "/")) {
+			return removeMultiplyDivideOnes(math[1]);
+		}
+		else {
+			return [math[0], removeMultiplyDivideOnes(math[1]), removeMultiplyDivideOnes(math[2])];
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------------------------
