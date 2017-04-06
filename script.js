@@ -121,9 +121,10 @@ function solve() {
 		var prefixArray = convertInfixToPrefix(funcArray);
 		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
 		var derivativeArray = differentiate(stackTree);
-		var infix = convertStackToInfix(derivativeArray); console.log(infix);
+		var simplifiedDerivativeArray = simplify(derivativeArray);
+		var infix = convertStackToInfix(simplifiedDerivativeArray); console.log(infix);
 		lastSolution = infix;
-		var imgUrlData = parseStackToImgURL(derivativeArray);
+		var imgUrlData = parseStackToImgURL(simplifiedDerivativeArray);
 		var imgUrl = makeUrl(imgUrlData);
 		page.solution.setAttribute("src", imgUrl);
 	}
@@ -476,6 +477,59 @@ function convertInfixToPrefix(infix) {
 	console.log(prefix);
 
 	return prefix;
+}
+function simplify(math) {
+	console.log("simplify("+math+")");
+
+	var layers = getArrayDepth(math, 1);
+
+	for(var i=0; i<layers; ++i) {
+		math = removeAddSubtractZeros(math);
+	}
+
+	return math;
+}
+function getArrayDepth(a, currentDepth) {
+	console.log("getArrayDepth("+a+", "+currentDepth+")");
+
+	var depths = [currentDepth];
+
+	for(var i=0; i<a.length; ++i) {
+		if(Array.isArray(a[i])) {
+			depths.push(getArrayDepth(a[i], currentDepth+1));
+		}
+	}
+
+	return Math.max.apply(null, depths);
+}
+function removeAddSubtractZeros(math) {
+	console.log("removeAddSubtractZeros("+math+")");
+	//When adding or subtracting a zero, get rid of it.
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], removeAddSubtractZeros(math[1])];
+	}
+	else if(math.length == 3) {
+		var o = math[0];
+		if(isZero(math[1][0]) && o == "+") {
+			return removeAddSubtractZeros(math[2]);
+		}
+		else if(isZero(math[1][0]) && o == "-") {
+			return ["*", ["-1"], removeAddSubtractZeros(math[2])];
+		}
+		else if(isZero(math[2][0]) && (o == "+" || o == "-")) {
+			return removeAddSubtractZeros(math[1]);
+		}
+		else {
+			return [math[0], removeAddSubtractZeros(math[1]), removeAddSubtractZeros(math[2])];
+		}
+	}
+}
+function isZero(x) {
+	//
+	return x == "0" || x == "-0";
 }
 
 //----------------------------------------------------------------------------------------------------
