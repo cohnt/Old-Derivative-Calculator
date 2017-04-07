@@ -502,8 +502,9 @@ function simplify(math) {
 		math = removeMultiplyDivideOnes(math);
 		math = sumsOfT(math);
 		math = integerArithmetic(math);
-		math = functionIdentities(math);
-		math = functionSimplification(math);
+		math = trigMath(math);
+		math = logMath(math);
+		math = expMath(math);
 	}
 
 	return math;
@@ -650,15 +651,109 @@ function integerArithmetic(math) {
 					break;
 			}
 		}
+		else {
+			return [math[0], integerArithmetic(math[1]), integerArithmetic(math[2])];
+		}
 	}
 }
-function functionIdentities(math) {
-	console.log("FUNCTION CALL: functionIdentities("+math+")");
+function trigMath(math) {
+	console.log("FUNCTION CALL: trigMath("+math+")");
 
-	return math;
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		var x = math[1][0];
+		switch(math[0]) {
+			case "sin":
+				if(x == "0") {
+					return ["0"];
+				}
+				break;
+			case "cos":
+				if(x == "0") {
+					return ["1"];
+				}
+				break;
+			case "tan":
+				if(x == "0") {
+					return ["0"];
+				}
+				break;
+			case "sec":
+				if(x == "0") {
+					return ["1"];
+				}
+				break;
+			case "csc":
+				if(x == "0") {
+					return ["/", ["1"], ["0"]];
+				}
+				break;
+			case "cot":
+				if(x == "0") {
+					return ["/", ["1"], ["0"]];
+				}
+				break;
+			case "arcsin":
+				if(x == "0") {
+					return ["0"];
+				}
+				break;
+			case "arccos":
+				if(x == "0") {
+					return ["/", ["PI"], ["2"]];
+				}
+				break;
+			case "arctan":
+				if(x == "0") {
+					return ["0"];
+				}
+				break;
+		}
+		return [math[0], trigMath(math[1])];
+	}
+	else if(math.length == 3) {
+		return [math[0], trigMath(math[1]), trigMath(math[2])];
+	}
 }
-function functionSimplification(math) {
-	console.log("FUNCTION CALL: functionSimplification("+math+")");
+function logMath(math) {
+	console.log("FUNCTION CALL: logMath("+math+")");
+
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		var x = math[1][0];
+		switch(math[0]) {
+			case "log":
+				if(isInt(Number(x)) && isInt(Math.log10(Number(x)))) {
+					return [String(Math.log10(Number(x)))];
+				}
+				else if(x == "^") { //log(a^b) = b*log(a)
+					return ["*", logMath(math[1][2]), ["log", logMath(math[1])]];
+				}
+				break;
+			case "ln":
+				if(x == "0") {
+					return ["/", ["-1"], ["0"]];
+				}
+				else if(x == "E") {
+					return ["1"];
+				}
+				else if(x == "^") { //log(a^b) = b*log(a)
+					return ["*", logMath(math[1][2]), ["ln", logMath(math[1])]];
+				}
+				break;
+		}
+		return [math[0], logMath(math[1])];
+	}
+	else if(math.length == 3) {
+		return [math[0], logMath(math[1]), logMath(math[2])];
+	}
+}
+function expMath(math) {
+	console.log("FUNCTION CALL: expMath("+math+")");
 
 	return math;
 }
