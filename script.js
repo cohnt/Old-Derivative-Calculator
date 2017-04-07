@@ -120,7 +120,7 @@ function solve() {
 		var funcArray = rawFuncStringToArray(rawFuncString);
 		var prefixArray = convertInfixToPrefix(funcArray);
 		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
-		var derivativeArray = differentiate(stackTree);
+		var derivativeArray = differentiate(stackTree); console.log(derivativeArray);
 		var simplifiedDerivativeArray = simplify(derivativeArray);
 		var infix = convertStackToInfix(simplifiedDerivativeArray); console.log(infix);
 		lastSolution = infix;
@@ -175,8 +175,11 @@ function rawFuncStringToArray(str) {
 					currentString = currentString.substr(mathSpecialStrings[i].length);
 					currentCharIndex += mathSpecialStrings[i].length;
 					nextChar = true;
-					if(!(mathSpecialStrings[i] == "(" || mathSpecialStrings[i] == ")")) {
+					if(!(mathSpecialStrings[i] == "(" || mathSpecialStrings[i] == ")" || mathSpecialStrings[i] == "T" || mathSpecialStrings[i] == "E" || mathSpecialStrings[i] == "PI")) {
 						lastCharOperator = true;
+					}
+					else if(mathSpecialStrings[i] == "T" || mathSpecialStrings[i] == "E" || mathSpecialStrings[i] == "PI") {
+						lastCharOperator = false;
 					}
 					break;
 				}
@@ -237,7 +240,7 @@ function makeStackTree(pf) {
 	return st;
 }
 function findArgIndexAndLength(pf, start) {
-	console.log("findArgIndexAndLength("+pf+")");
+	console.log("findArgIndexAndLength("+pf+", "+start+")");
 
 	var i = start;
 	var unmetArgs = 1;
