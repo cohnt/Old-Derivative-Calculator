@@ -125,7 +125,8 @@ function solve() {
 		var infix = convertStackToInfix(simplifiedDerivativeArray); console.log(infix);                     prettyPrintMultiDimArray(infix);
 		lastSolution = infix;
 		var imgUrlData = parseStackToImgURL(simplifiedDerivativeArray);
-		var imgUrl = makeUrl(imgUrlData);
+		var reducedParenthesesImgUrlData = removeRedundantParentheses(imgUrlData);
+		var imgUrl = makeUrl(reducedParenthesesImgUrlData);
 		page.solution.setAttribute("src", imgUrl);
 	}
 	catch(err) {
@@ -826,6 +827,37 @@ function prettyPrintMultiDimArray(a, numIndents) {
 			prettyPrintMultiDimArray(a[i], numIndents+1);
 		}
 	}
+}
+function removeRedundantParentheses(str) {
+	console.log("removeRedundantParentheses("+str+")");
+
+	for(var i=0; i<str.length-1; ++i) {
+		var charPair = str.substring(i, i+2);
+		if(charPair == "((") {
+			var numUnmatched = 2;
+			var char;
+			var j=2;
+			while(numUnmatched > 1 && i+j < str.length) {
+				char = str.substring(i+j, i+j+1);
+				if(char == "(") {
+					++numUnmatched;
+				}
+				else if(char == ")") {
+					--numUnmatched;
+				}
+				++j;
+			}
+			if(str.substring(i+j, i+j+1) == ")") {
+				var substrings = [];
+				substrings.push(str.slice(0, i+1));
+				substrings.push(str.slice(i+2, i+j));
+				substrings.push(str.slice(i+j+1));
+				str = substrings[0] + substrings[1] + substrings[2];
+			}
+		}
+	}
+
+	return str;
 }
 
 //----------------------------------------------------------------------------------------------------
