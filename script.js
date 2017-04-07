@@ -330,7 +330,7 @@ function differentiate(stack) {
 				return ["/", differentiate(u), ["*", u, ["ln", ["10"]]]];
 				break;
 			case "ln": //ln(u) -> u^(-1)*du
-				return ["*", ["^", u, "-1"], differentiate(u)];
+				return ["*", ["^", u, ["-1"]], differentiate(u)];
 				break;
 		}
 	}
