@@ -209,6 +209,15 @@ function rawFuncStringToArray(str) {
 			fArray.push(num);
 		}
 	}
+
+	for(var i=0; i<fArray.length; ++i) {
+		if(fArray[i] == "-") {
+			fArray.splice(i, 1, "+");
+			fArray.splice(i+1, 0, "*");
+			fArray.splice(i+2, 0, "-1");
+		}
+	}
+
 	return fArray;
 }
 function makeStackTree(pf) {
