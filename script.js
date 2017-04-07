@@ -285,8 +285,16 @@ function differentiate(stack) {
 			case "/": //Quotient Rule: u/v -> (vdu-udv)/(v^2)
 				return ["/", ["-", ["*", differentiate(u), v], ["*", u, differentiate(v)]], ["^", v, ["2"]]]
 				break;
-			case "^": //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
-				return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
+			case "^":
+				if(!isNaN(Number(u[0])) || u[0] == "PI" || u[0] == "E") { //k^v -> k^v*ln(k)
+					return ["*", ["^", u, v], ["ln", u]];
+				}
+				else if(!isNaN(Number(v[0])) || v[0] == "PI" || v[0] == "E") { //u^k -> k*u^(k-1)
+					return ["*", v, ["^", u, ["-", v, "1"]]]
+				}
+				else { //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
+					return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
+				}
 				break;
 			case "sin": //sin(u) -> cos(u)*du
 				return ["*", ["cos", u], differentiate(u)];
@@ -484,6 +492,7 @@ function convertInfixToPrefix(infix) {
 }
 function simplify(math) {
 	console.log("simplify("+math+")");
+	//Note: https://en.wikipedia.org/wiki/Symbolic_computation#Simplification
 
 	var layers = getArrayDepth(math, 1);
 
@@ -492,6 +501,7 @@ function simplify(math) {
 		math = removeMultiplyDivideZeros(math);
 		math = removeMultiplyDivideOnes(math);
 		math = sumsOfT(math);
+		math = integerArithmetic(math);
 	}
 
 	return math;
@@ -592,7 +602,7 @@ function removeMultiplyDivideOnes(math) {
 	}
 }
 function sumsOfT(math) {
-	console.log("sumsOfT("+math+")");
+	console.log("FUNCTION CALL: sumsOfT("+math+")");
 
 	if(math.length == 1) {
 		return [math[0]];
@@ -608,6 +618,15 @@ function sumsOfT(math) {
 			return [math[0], sumsOfT(math[1]), sumsOfT(math[2])];
 		}
 	}
+}
+function integerArithmetic(math) {
+	console.log("FUNCTION CALL: integerArithmetic("+math+")");
+
+	return math;
+}
+function isInt(x) {
+	//
+	return x % 1 == 0
 }
 
 //----------------------------------------------------------------------------------------------------
