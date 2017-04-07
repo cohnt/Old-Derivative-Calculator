@@ -491,6 +491,7 @@ function simplify(math) {
 		math = removeAddSubtractZeros(math);
 		math = removeMultiplyDivideZeros(math);
 		math = removeMultiplyDivideOnes(math);
+		math = sumsOfT(math);
 	}
 
 	return math;
@@ -587,6 +588,24 @@ function removeMultiplyDivideOnes(math) {
 		}
 		else {
 			return [math[0], removeMultiplyDivideOnes(math[1]), removeMultiplyDivideOnes(math[2])];
+		}
+	}
+}
+function sumsOfT(math) {
+	console.log("sumsOfT("+math+")");
+
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], sumsOfT(math[1])];
+	}
+	else if(math.length == 3) {
+		if(math[1][0] == "T" && math[2][0] == "T" && math[0] == "+") {
+			return ["*", ["2"], ["T"]];
+		}
+		else {
+			return [math[0], sumsOfT(math[1]), sumsOfT(math[2])];
 		}
 	}
 }
