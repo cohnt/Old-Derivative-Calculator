@@ -117,12 +117,12 @@ function solve() {
 
 	try {
 		var rawFuncString = page.userFunc.value;
-		var funcArray = rawFuncStringToArray(rawFuncString);
-		var prefixArray = convertInfixToPrefix(funcArray);
-		var stackTree = makeStackTree(prefixArray); console.log(stackTree);
-		var derivativeArray = differentiate(stackTree); console.log(derivativeArray);
-		var simplifiedDerivativeArray = simplify(derivativeArray);
-		var infix = convertStackToInfix(simplifiedDerivativeArray); console.log(infix);
+		var funcArray = rawFuncStringToArray(rawFuncString);        console.log(funcArray);                 prettyPrintMultiDimArray(funcArray);
+		var prefixArray = convertInfixToPrefix(funcArray);          console.log(prefixArray);               prettyPrintMultiDimArray(prefixArray);
+		var stackTree = makeStackTree(prefixArray);                 console.log(stackTree);                 prettyPrintMultiDimArray(stackTree);
+		var derivativeArray = differentiate(stackTree);             console.log(derivativeArray);           prettyPrintMultiDimArray(derivativeArray);
+		var simplifiedDerivativeArray = simplify(derivativeArray);  console.log(simplifiedDerivativeArray); prettyPrintMultiDimArray(simplifiedDerivativeArray);
+		var infix = convertStackToInfix(simplifiedDerivativeArray); console.log(infix);                     prettyPrintMultiDimArray(infix);
 		lastSolution = infix;
 		var imgUrlData = parseStackToImgURL(simplifiedDerivativeArray);
 		var imgUrl = makeUrl(imgUrlData);
@@ -809,6 +809,23 @@ function expMath(math) {
 function isInt(x) {
 	//
 	return x % 1 == 0
+}
+function prettyPrintMultiDimArray(a, numIndents) {
+	for(var i=0; i<a.length; ++i) {
+		var indent = "";
+		for(var j=0; j<numIndents-1; ++j) {
+			indent = indent + "\t";
+		}
+		if(numIndents > 0) {
+			indent = indent + "\u21B3\t";
+		}
+		if(!Array.isArray(a[i])) {
+			console.log(indent + String(a[i]));
+		}
+		else {
+			prettyPrintMultiDimArray(a[i], numIndents+1);
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------------------------
