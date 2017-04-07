@@ -302,7 +302,7 @@ function differentiate(stack) {
 					return ["*", ["*", ["^", u, v], ["ln", u]], differentiate(v)];
 				}
 				else if(!isNaN(Number(v[0])) || v[0] == "PI" || v[0] == "E") { //u^k -> k*u^(k-1)*du
-					return ["*", ["*", v, ["^", u, ["-", v, "1"]], differentiate(u)]];
+					return ["*", ["*", v, ["^", u, ["-", v, "1"]]], differentiate(u)];
 				}
 				else { //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
 					return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
