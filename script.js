@@ -286,11 +286,11 @@ function differentiate(stack) {
 				return ["/", ["-", ["*", differentiate(u), v], ["*", u, differentiate(v)]], ["^", v, ["2"]]]
 				break;
 			case "^":
-				if(!isNaN(Number(u[0])) || u[0] == "PI" || u[0] == "E") { //k^v -> k^v*ln(k)
-					return ["*", ["^", u, v], ["ln", u]];
+				if(!isNaN(Number(u[0])) || u[0] == "PI" || u[0] == "E") { //k^v -> k^v*ln(k)*dv
+					return ["*", ["*", ["^", u, v], ["ln", u]], differentiate(v)];
 				}
-				else if(!isNaN(Number(v[0])) || v[0] == "PI" || v[0] == "E") { //u^k -> k*u^(k-1)
-					return ["*", v, ["^", u, ["-", v, "1"]]]
+				else if(!isNaN(Number(v[0])) || v[0] == "PI" || v[0] == "E") { //u^k -> k*u^(k-1)*du
+					return ["*", ["*", v, ["^", u, ["-", v, "1"]], differentiate(u)]];
 				}
 				else { //Logarithm Rule (?): u^v -> (u^v)*((dv*ln(u))+(v*(du/u)))
 					return ["*", ["^", u, v], ["+", ["*", differentiate(v), ["ln", u]], ["*", v, ["/", differentiate(u), u]]]];
@@ -730,8 +730,11 @@ function logMath(math) {
 				if(isInt(Number(x)) && isInt(Math.log10(Number(x)))) {
 					return [String(Math.log10(Number(x)))];
 				}
+				else if(x == "10") {
+					return ["1"];
+				}
 				else if(x == "^") { //log(a^b) = b*log(a)
-					return ["*", logMath(math[1][2]), ["log", logMath(math[1])]];
+					return ["*", logMath(math[1][2]), ["log", logMath(math[1][1])]];
 				}
 				break;
 			case "ln":
@@ -742,7 +745,7 @@ function logMath(math) {
 					return ["1"];
 				}
 				else if(x == "^") { //log(a^b) = b*log(a)
-					return ["*", logMath(math[1][2]), ["ln", logMath(math[1])]];
+					return ["*", logMath(math[1][2]), ["ln", logMath(math[1][1])]];
 				}
 				break;
 		}
