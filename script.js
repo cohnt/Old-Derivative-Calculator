@@ -758,7 +758,41 @@ function logMath(math) {
 function expMath(math) {
 	console.log("FUNCTION CALL: expMath("+math+")");
 
-	return math;
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], expMath(math[1])];
+	}
+	else if(math.length == 3) {
+		var o = math[0];
+		var a = math[1][0];
+		var b = math[2][0];
+		if(o == "^") {
+			if(isZero(a) && isZero(b)) {
+				alert("Warning, your answer contains 0^0. Answer may be innacurate.");
+				return ["1"];
+			}
+			if(isZero(a)) {
+				return ["0"];
+			}
+			else if(isZero(b)) {
+				return ["1"];
+			}
+			else if(a == "1") {
+				return ["1"];
+			}
+			else if(b == "1") {
+				return [a];
+			}
+			else {
+				return [math[0], expMath(math[1]), expMath(math[2])]; 
+			}
+		}
+		else {
+			return [math[0], expMath(math[1]), expMath(math[2])];
+		}
+	}
 }
 function isInt(x) {
 	//
