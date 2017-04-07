@@ -502,6 +502,8 @@ function simplify(math) {
 		math = removeMultiplyDivideOnes(math);
 		math = sumsOfT(math);
 		math = integerArithmetic(math);
+		math = functionIdentities(math);
+		math = functionSimplification(math);
 	}
 
 	return math;
@@ -621,6 +623,42 @@ function sumsOfT(math) {
 }
 function integerArithmetic(math) {
 	console.log("FUNCTION CALL: integerArithmetic("+math+")");
+
+	if(math.length == 1) {
+		return [math[0]];
+	}
+	else if(math.length == 2) {
+		return [math[0], integerArithmetic(math[1])];
+	}
+	else if(math.length == 3) {
+		var a = Number(math[1][0]);
+		var b = Number(math[2][0]);
+		var o = math[0];
+		if(isInt(a) && isInt(b)) {
+			switch(o) {
+				case "+":
+					return [String(a+b)];
+					break;
+				case "-":
+					return [String(a-b)];
+					break;
+				case "*":
+					return [String(a*b)];
+					break;
+				case "^":
+					return [String(Math.pow(a, b))];
+					break;
+			}
+		}
+	}
+}
+function functionIdentities(math) {
+	console.log("FUNCTION CALL: functionIdentities("+math+")");
+
+	return math;
+}
+function functionSimplification(math) {
+	console.log("FUNCTION CALL: functionSimplification("+math+")");
 
 	return math;
 }
