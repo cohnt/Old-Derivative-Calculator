@@ -108,6 +108,7 @@ function setup() {
 	page.userFunc = document.getElementById("userFunc"); //
 	page.calcButton = document.getElementById("calcButton");
 	page.solution = document.getElementById("solution");
+	page.plaintextSolution = document.getElementById("plaintextSolution");
 
 	page.calcButton.addEventListener("click", solve);
 }
@@ -128,6 +129,7 @@ function solve() {
 		var reducedParenthesesImgUrlData = removeRedundantParentheses(imgUrlData);
 		var imgUrl = makeUrl(reducedParenthesesImgUrlData);
 		page.solution.setAttribute("src", imgUrl);
+		page.plaintextSolution.innerHTML = lastSolution;
 	}
 	catch(err) {
 		console.log(err);
